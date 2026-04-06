@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚔️ The Colosseum - XYRA Command Center</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #0f172e;
+            --secondary: #1a2847;
+            --accent: #00d4ff;
+            --accent-light: #ff6b7a;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b8d4;
+            --border: #333333;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+            flex-direction: column;
+        }
+
+        /* HEADER */
+        .header {
+            background: rgba(26, 26, 46, 0.95);
+            border-bottom: 2px solid var(--accent);
+            padding: 14px 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .header h1 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--accent-light);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .status-text {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        .menu-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            color: var(--accent);
+            width: 32px;
+            height: 32px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .menu-btn:hover {
+            background: rgba(0, 212, 255, 0.1);
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 260px;
+            background: rgba(22, 33, 62, 0.4);
+            border-right: 1px solid rgba(0, 212, 255, 0.2);
+            padding: 14px;
+            overflow-y: auto;
+            font-size: 11px;
+        }
+
+        .sidebar-section {
+            margin-bottom: 18px;
+        }
+
+        .sidebar-title {
+            color: var(--accent-light);
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .task-card {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 6px;
+            padding: 10px;
+            margin-bottom: 8px;
+        }
+
+        .task-new {
+            border-color: rgba(46, 204, 113, 0.3);
+            background: rgba(46, 204, 113, 0.1);
+        }
+
+        .task-processing {
+            border-color: rgba(243, 156, 18, 0.3);
+            background: rgba(243, 156, 18, 0.1);
+        }
+
+        .task-pending {
+            border-color: rgba(0, 212, 255, 0.3);
+            background: rgba(0, 212, 255, 0.1);
+        }
+
+        .task-label {
+            font-weight: 600;
+            margin-bottom: 6px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .task-count {
+            color: var(--accent);
+        }
+
+        .task-item {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 6px;
+            border-radius: 4px;
+            margin-bottom: 4px;
+            font-size: 9px;
+        }
+
+        .progress-bar {
+            background: rgba(0, 0, 0, 0.3);
+            height: 4px;
+            border-radius: 2px;
+            overflow: hidden;
+            margin: 4px 0;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, var(--accent), var(--success));
+            height: 100%;
+            border-radius: 2px;
+        }
+
+        .completion-box {
+            background: rgba(46, 204, 113, 0.1);
+            border: 1px solid rgba(46, 204, 113, 0.3);
+            border-radius: 6px;
+            padding: 10px;
+        }
+
+        .completion-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+
+        .completion-checkbox input {
+            width: 14px;
+            height: 14px;
+            cursor: pointer;
+        }
+
+        .completion-count {
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        /* CHAT AREA */
+        .chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: rgba(15, 23, 46, 0.6);
+        }
+
+        .messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .message {
+            margin-bottom: 12px;
+            display: flex;
+            gap: 8px;
+            animation: slideIn 0.3s ease;
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message.assistant {
+            justify-content: flex-start;
+        }
+
+        .message-content {
+            max-width: 65%;
+            padding: 12px;
+            border-radius: 8px;
+            word-break: break-word;
+            font-size: 12px;
+        }
+
+        .message.user .message-content {
+            background: rgba(233, 69, 96, 0.2);
+            border: 1px solid var(--accent-light);
+            color: var(--text-primary);
+        }
+
+        .message.assistant .message-content {
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            color: var(--text-secondary);
+        }
+
+        .agent-contribution {
+            background: rgba(0, 0, 0, 0.2);
+            border-left: 2px solid var(--accent);
+            padding: 8px;
+            margin: 6px 0;
+            border-radius: 4px;
+            font-size: 11px;
+        }
+
+        .agent-name {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .agent-desc {
+            color: var(--text-secondary);
+            font-size: 10px;
+            margin-top: 3px;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* INPUT AREA */
+        .input-area {
+            background: rgba(22, 33, 62, 0.8);
+            border-top: 1px solid rgba(0, 212, 255, 0.2);
+            padding: 12px;
+        }
+
+        .file-preview {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
+        }
+
+        .file-tag {
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 4px;
+            padding: 6px 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 10px;
+        }
+
+        .file-remove {
+            background: none;
+            border: none;
+            color: var(--accent-light);
+            cursor: pointer;
+            font-size: 10px;
+            padding: 0;
+        }
+
+        .input-controls {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .input-box {
+            flex: 1;
+            padding: 10px 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-size: 11px;
+        }
+
+        .input-box:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: rgba(0, 212, 255, 0.05);
+        }
+
+        .btn-send {
+            background: linear-gradient(135deg, var(--accent-light), #ff8a9b);
+            border: none;
+            color: white;
+            padding: 10px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-send:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(233, 69, 96, 0.3);
+        }
+
+        .btn-voice {
+            background: rgba(233, 69, 96, 0.1);
+            border: 1px solid var(--accent-light);
+            color: var(--accent-light);
+            padding: 10px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .btn-voice:hover {
+            background: rgba(233, 69, 96, 0.2);
+        }
+
+        .btn-voice.listening {
+            background: var(--accent-light);
+            color: white;
+            animation: pulse 1s infinite;
+        }
+
+        .quick-buttons {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .quick-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            color: var(--text-secondary);
+            padding: 6px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 10px;
+            transition: all 0.3s;
+        }
+
+        .quick-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: rgba(0, 212, 255, 0.1);
+        }
+
+        /* MENUS */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--secondary);
+            border: 1px solid var(--accent);
+            border-radius: 8px;
+            padding: 20px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .modal-title {
+            font-size: 16px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--accent-light);
+        }
+
+        .btn-close {
+            background: none;
+            border: none;
+            color: var(--accent);
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .setting-group {
+            margin-bottom: 16px;
+        }
+
+        .setting-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 12px;
+        }
+
+        .toggle {
+            width: 36px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .toggle.active {
+            background: var(--success);
+            border-color: var(--success);
+        }
+
+        .toggle-dot {
+            width: 16px;
+            height: 16px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: left 0.3s;
+        }
+
+        .toggle.active .toggle-dot {
+            left: 18px;
+        }
+
+        .menu-dropdown {
+            position: absolute;
+            top: 50px;
+            right: 18px;
+            background: rgba(26, 26, 46, 0.95);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 8px;
+            width: 180px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            z-index: 1500;
+            display: none;
+        }
+
+        .menu-dropdown.active {
+            display: block;
+        }
+
+        .menu-item {
+            width: 100%;
+            padding: 12px 16px;
+            background: none;
+            border: none;
+            border-bottom: 1px solid rgba(0, 212, 255, 0.1);
+            color: var(--accent);
+            text-align: left;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .menu-item:last-child {
+            border-bottom: none;
+        }
+
+        .menu-item:hover {
+            background: rgba(0, 212, 255, 0.1);
+        }
+
+        /* SCROLLBAR */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 3px;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 200px;
+                padding: 10px;
+            }
+
+            .message-content {
+                max-width: 80%;
+            }
+
+            .modal-content {
+                max-width: 95%;
+            }
+
+            .header h1 {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- HEADER -->
+        <div class="header">
+            <h1>⚔️ The Colosseum</h1>
+            <div class="header-right">
+                <div class="status-dot"></div>
+                <span class="status-text">SYSTEM ONLINE</span>
+                <button class="menu-btn" id="menu-btn">☰</button>
+            </div>
+            <div class="menu-dropdown" id="menu-dropdown">
+                <button class="menu-item" onclick="openModal('settings')">⚙️ Settings</button>
+                <button class="menu-item" onclick="openModal('agents')">🤖 Agent Status</button>
+                <button class="menu-item" onclick="openModal('terminal')">💻 Terminal</button>
+                <button class="menu-item" onclick="openModal('workflow')">🔗 Workflow</button>
+                <button class="menu-item" onclick="openModal('history')">📜 History</button>
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+            <!-- SIDEBAR -->
+            <div class="sidebar">
+                <div class="sidebar-section">
+                    <div class="sidebar-title">📌 Tasks</div>
+                    <div class="task-card task-new">
+                        <div class="task-label">
+                            <span>New Tasks</span>
+                            <span class="task-count">3</span>
+                        </div>
+                        <div class="task-item">🔥 AI Chatbot - $2.5K</div>
+                        <div class="task-item">🔥 Website Redesign - $1.8K</div>
+                        <div class="task-item">🔥 Automation Setup - $1.2K</div>
+                    </div>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="task-card task-processing">
+                        <div class="task-label">
+                            <span>🔄 Processing</span>
+                            <span class="task-count">2</span>
+                        </div>
+                        <div class="task-item">
+                            <div>Competitor Analysis</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 45%;"></div>
+                            </div>
+                            <div style="color: var(--text-secondary); font-size: 8px;">45%</div>
+                        </div>
+                        <div class="task-item">
+                            <div>Content Generation</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 72%;"></div>
+                            </div>
+                            <div style="color: var(--text-secondary); font-size: 8px;">72%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="task-card task-pending">
+                        <div class="task-label">
+                            <span>⏳ Pending</span>
+                            <span class="task-count">1</span>
+                        </div>
+                        <div class="task-item">✅ Logo Design Complete</div>
+                    </div>
+                </div>
+
+                <div class="sidebar-section">
+                    <div class="completion-box">
+                        <div class="sidebar-title" style="margin-bottom: 8px;">✓ Completion</div>
+                        <div class="completion-checkbox">
+                            <input type="checkbox" id="all-done" checked>
+                            <label for="all-done" style="cursor: pointer;">All Tasks Done?</label>
+                            <span class="completion-count" style="margin-left: auto;">6/9</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 67%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CHAT AREA -->
+            <div class="chat-area">
+                <div class="messages" id="messages">
+                    <div class="message assistant">
+                        <div class="message-content">
+                            <div style="color: var(--accent); font-weight: 600; margin-bottom: 8px;">Welcome to The Colosseum</div>
+                            <div>Type commands, upload files, or speak. Try: "Analyze competitor" or "Show hot gigs"</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-area">
+                    <div class="file-preview" id="file-preview"></div>
+                    
+                    <div class="input-controls">
+                        <input type="text" class="input-box" id="input-text" placeholder="Type command or ask agents..." />
+                        <button class="btn-send" onclick="sendMessage()">Send</button>
+                        <button class="btn-voice" id="voice-btn" onclick="toggleVoice()">🎤</button>
+                    </div>
+
+                    <div class="quick-buttons">
+                        <button class="quick-btn" onclick="addFile()">📎 File</button>
+                        <button class="quick-btn" onclick="addVideo()">🎥 Video</button>
+                        <button class="quick-btn" onclick="addImage()">🖼️ Image</button>
+                        <button class="quick-btn" onclick="openModal('terminal')" style="margin-left: auto;">/ Terminal</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODALS -->
+    
+    <!-- SETTINGS MODAL -->
+    <div class="modal" id="settings-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">⚙️ Settings</h2>
+                <button class="btn-close" onclick="closeModal('settings')">&times;</button>
+            </div>
+            
+            <div class="setting-group">
+                <div class="setting-label">
+                    <span>Dark Mode</span>
+                    <div class="toggle active" onclick="toggleSetting(this)"><div class="toggle-dot"></div></div>
+                </div>
+            </div>
+
+            <div class="setting-group">
+                <div class="setting-label">
+                    <span>Active Location Tracking</span>
+                    <div class="toggle active" onclick="toggleSetting(this)"><div class="toggle-dot"></div></div>
+                </div>
+            </div>
+
+            <div class="setting-group">
+                <div class="setting-label">
+                    <span>Voice Commands</span>
+                    <div class="toggle active" onclick="toggleSetting(this)"><div class="toggle-dot"></div></div>
+                </div>
+            </div>
+
+            <div class="setting-group">
+                <label style="font-size: 11px; color: var(--text-secondary); display: block; margin-bottom: 6px;">Your Location</label>
+                <input type="text" value="Mumbai, India" class="input-box" />
+            </div>
+
+            <div class="setting-group">
+                <label style="font-size: 11px; color: var(--text-secondary); display: block; margin-bottom: 6px;">Email</label>
+                <input type="email" value="xyra.services@gmail.com" readonly class="input-box" />
+            </div>
+        </div>
+    </div>
+
+    <!-- AGENT STATUS MODAL -->
+    <div class="modal" id="agents-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">🤖 Agent Status (22 Agents)</h2>
+                <button class="btn-close" onclick="closeModal('agents')">&times;</button>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div class="agent-contribution" style="border-left-color: var(--success);">🎯 Gig Monitor <span style="float: right; color: var(--success);">●</span></div>
+                <div class="agent-contribution" style="border-left-color: var(--success);">🕷️ Web Scraper <span style="float: right; color: var(--success);">●</span></div>
+                <div class="agent-contribution" style="border-left-color: var(--success);">📝 Content <span style="float: right; color: var(--success);">●</span></div>
+                <div class="agent-contribution" style="border-left-color: var(--success);">🔨 Builder <span style="float: right; color: var(--success);">●</span></div>
+                <div class="agent-contribution" style="border-left-color: var(--warning);">📊 Strategist <span style="float: right; color: var(--warning);">●</span></div>
+                <div class="agent-contribution" style="border-left-color: var(--success);">✅ Checker <span style="float: right; color: var(--success);">●</span></div>
+                <div class="agent-contribution" style="border-left-color: var(--success);">🎨 Designer <span style="float: right; color: var(--success);">●</span></div>
+                <div class="agent-contribution" style="border-left-color: var(--success);">📜 Compliance <span style="float: right; color: var(--success);">●</span></div>
+                <div class="agent-contribution" style="border-left-color: var(--success);">📈 Auditor <span style="float: right; color: var(--success);">●</span></div>
+                <div class="agent-contribution" style="border-left-color: var(--success);">⚡ Executor <span style="float: right; color: var(--success);">●</span></div>
+                <div class="agent-contribution" style="border-left-color: var(--success);">🔐 Guardian <span style="float: right; color: var(--success);">●</span></div>
+                <div class="agent-contribution" style="border-left-color: var(--success);">🤖 BANKAI <span style="float: right; color: var(--success);">●</span></div>
+                <div class="agent-contribution" style="border-left-color: var(--success);">📄 Resume Analyzer <span style="float: right; color: var(--success);">●</span></div>
+                <div class="agent-contribution" style="border-left-color: var(--success);">🎤 Voice Specialist <span style="float: right; color: var(--success);">●</span></div>
+                <div class="agent-contribution" style="border-left-color: var(--success);">📹 Caption Master <span style="float: right; color: var(--success);">●</span></div>
+                <div class="agent-contribution" style="border-left-color: var(--success);">🎯 Mindmap <span style="float: right; color: var(--success);">●</span></div>
+                <div class="agent-contribution" style="border-left-color: var(--success);">📢 Social Head <span style="float: right; color: var(--success);">●</span></div>
+                <div class="agent-contribution" style="border-left-color: var(--success);">💰 Ad Strategist <span style="float: right; color: var(--success);">●</span></div>
+                <div class="agent-contribution" style="border-left-color: var(--success);">📊 Office Ops <span style="float: right; color: var(--success);">●</span></div>
+                <div class="agent-contribution" style="border-left-color: var(--success);">🎉 Event Planner <span style="float: right; color: var(--success);">●</span></div>
+                <div class="agent-contribution" style="border-left-color: var(--success);">💎 Investment Advisor <span style="float: right; color: var(--success);">●</span></div>
+                <div class="agent-contribution" style="border-left-color: var(--success);">📰 News Reporter <span style="float: right; color: var(--success);">●</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TERMINAL MODAL -->
+    <div class="modal" id="terminal-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">💻 Terminal</h2>
+                <button class="btn-close" onclick="closeModal('terminal')">&times;</button>
+            </div>
+            
+            <div style="background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(0, 212, 255, 0.2); border-radius: 6px; padding: 12px; margin-bottom: 12px; font-family: 'Courier New', monospace; font-size: 11px; max-height: 200px; overflow-y: auto; color: var(--success);">
+                <div>$ /bankai give the code for this task</div>
+                <div style="color: var(--text-secondary); margin-top: 8px;">Generating code package...</div>
+                <div style="color: var(--success); margin-top: 8px;">✓ Code generated (1,245 lines)</div>
+            </div>
+
+            <div style="display: flex; gap: 8px; margin-bottom: 10px;">
+                <input type="text" placeholder="Type /bankai command..." class="input-box" style="flex: 1; font-family: 'Courier New', monospace;" />
+                <button class="btn-send">Execute</button>
+            </div>
+
+            <div style="background: rgba(46, 204, 113, 0.1); border: 1px solid rgba(46, 204, 113, 0.2); border-radius: 6px; padding: 10px; font-size: 10px;">
+                <div style="color: var(--success); font-weight: 600; margin-bottom: 6px;">📊 Code Breakdown:</div>
+                <div style="background: rgba(0, 0, 0, 0.3); border-radius: 4px; padding: 8px;">
+                    <div>80% Python</div>
+                    <div>12% HTML</div>
+                    <div>8% CSS</div>
+                </div>
+                <div style="background: rgba(0, 0, 0, 0.2); height: 4px; border-radius: 2px; overflow: hidden; margin-top: 8px;">
+                    <div style="background: linear-gradient(90deg, #3b82f6, #8b5cf6); height: 100%; width: 80%;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- WORKFLOW MODAL -->
+    <div class="modal" id="workflow-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">🔗 Workflow</h2>
+                <button class="btn-close" onclick="closeModal('workflow')">&times;</button>
+            </div>
+            
+            <div class="agent-contribution">
+                <div style="font-weight: 600; color: var(--text-primary);">Gig Discovery → Build Solution</div>
+                <div class="agent-desc">🎯 Gig Monitor → 🕷️ Web Scraper → 📊 Strategist → 🔨 Builder → ✅ Checker → ⚡ Executor</div>
+            </div>
+
+            <div class="agent-contribution" style="border-left-color: var(--accent-light);">
+                <div style="font-weight: 600; color: var(--text-primary);">Content Creation Flow</div>
+                <div class="agent-desc">📝 Content → 🎨 Designer → 📢 Social Media Head → ⚡ Executor</div>
+            </div>
+
+            <div class="agent-contribution" style="border-left-color: var(--success);">
+                <div style="font-weight: 600; color: var(--text-primary);">Quality Assurance Loop</div>
+                <div class="agent-desc">✅ Checker → 📈 Auditor → 📊 Strategist → 🔨 Builder</div>
+            </div>
+
+            <div style="background: rgba(0, 212, 255, 0.1); border: 1px solid rgba(0, 212, 255, 0.2); border-radius: 6px; padding: 10px; margin-top: 12px; font-size: 11px;">
+                <div style="color: var(--accent); font-weight: 600;">🤖 BANKAI Orchestration</div>
+                <div style="color: var(--text-secondary); margin-top: 4px; font-size: 10px;">Coordinates all agents, optimizes workflows, synthesizes results</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- HISTORY MODAL -->
+    <div class="modal" id="history-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">📜 History</h2>
+                <button class="btn-close" onclick="closeModal('history')">&times;</button>
+            </div>
+            
+            <div class="agent-contribution" style="border-left-color: var(--success);">
+                <div style="display: flex; justify-content: space-between; align-items: start;">
+                    <div>
+                        <div style="font-weight: 600; color: var(--text-primary);">Logo Design</div>
+                        <div class="agent-desc">🎨 Designer completed</div>
+                    </div>
+                    <div style="text-align: right; font-size: 9px;">
+                        <div style="color: var(--success);">✓ Complete</div>
+                        <div style="color: var(--text-secondary);">2:34 PM - 2:47 PM</div>
+                        <div style="color: var(--text-secondary); font-size: 8px;">13 mins</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="agent-contribution" style="border-left-color: var(--success);">
+                <div style="display: flex; justify-content: space-between; align-items: start;">
+                    <div>
+                        <div style="font-weight: 600; color: var(--text-primary);">Competitor Analysis</div>
+                        <div class="agent-desc">🕷️ Web Scraper + 📊 Strategist</div>
+                    </div>
+                    <div style="text-align: right; font-size: 9px;">
+                        <div style="color: var(--success);">✓ Complete</div>
+                        <div style="color: var(--text-secondary);">1:15 PM - 1:42 PM</div>
+                        <div style="color: var(--text-secondary); font-size: 8px;">27 mins</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="agent-contribution" style="border-left-color: var(--success);">
+                <div style="display: flex; justify-content: space-between; align-items: start;">
+                    <div>
+                        <div style="font-weight: 600; color: var(--text-primary);">Website Development</div>
+                        <div class="agent-desc">🔨 Builder + ✅ Checker + ⚡ Executor</div>
+                    </div>
+                    <div style="text-align: right; font-size: 9px;">
+                        <div style="color: var(--success);">✓ Complete</div>
+                        <div style="color: var(--text-secondary);">10:00 AM - 12:30 PM</div>
+                        <div style="color: var(--text-secondary); font-size: 8px;">2h 30m</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recognition.continuous = false;
+        recognition.interimResults = false;
+        recognition.lang = 'en-US';
+
+        let isListening = false;
+        let uploadedFiles = [];
+
+        // Voice Recognition
+        document.getElementById('voice-btn').addEventListener('click', toggleVoice);
+
+        function toggleVoice() {
+            if (isListening) {
+                recognition.stop();
+            } else {
+                recognition.start();
+                isListening = true;
+                document.getElementById('voice-btn').classList.add('listening');
+            }
+        }
+
+        recognition.onresult = function(event) {
+            const transcript = event.results[0][0].transcript;
+            document.getElementById('input-text').value = transcript;
+            isListening = false;
+            document.getElementById('voice-btn').classList.remove('listening');
+        };
+
+        recognition.onend = function() {
+            isListening = false;
+            document.getElementById('voice-btn').classList.remove('listening');
+        };
+
+        // Send Message - CALLS BACKEND API
+        async function sendMessage() {
+            const text = document.getElementById('input-text').value;
+            if (!text.trim()) return;
+
+            addMessage(text, 'user');
+            document.getElementById('input-text').value = '';
+            addMessage('⏳ Processing... Agents activated', 'assistant');
+
+            const command = text.toLowerCase();
+            let endpoint = null;
+            let payload = {};
+
+            // Route to correct backend endpoint
+            if (command.includes('gig') || command.includes('hot')) {
+                endpoint = '/api/gigs';
+            } else if (command.includes('analyze') || command.includes('competitor')) {
+                endpoint = '/api/analyze';
+                payload = { url: 'https://competitor.example.com', useBANKAI: false };
+            } else if (command.includes('generate') || command.includes('email')) {
+                endpoint = '/api/content';
+                payload = { topic: 'cold emails', count: 3 };
+            } else if (command.includes('/bankai') || command.includes('code')) {
+                endpoint = '/api/terminal';
+                payload = { command: text };
+            }
+
+            if (!endpoint) {
+                addMessage('❌ Unknown command. Try: "Show hot gigs", "Analyze competitor", "Generate 3 emails", or "/bankai code"', 'assistant');
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://localhost:5000${endpoint}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    if (data.gigs) {
+                        let gigsText = '🎯 **Hot Gigs Found:**\n\n';
+                        data.gigs.forEach(gig => {
+                            gigsText += `• ${gig.title} (${gig.platform}) - ${gig.posted} - ${gig.match} match\n`;
+                        });
+                        addMessage(gigsText, 'assistant');
+                    } else if (data.analysis) {
+                        addMessage(`📊 **Competitor Analysis:**\n\n${data.analysis}`, 'assistant');
+                    } else if (data.content) {
+                        addMessage(`📝 **Generated Content:**\n\n${data.content}`, 'assistant');
+                    } else if (data.result) {
+                        addMessage(`💻 **BANKAI Result:**\n\n${data.result}`, 'assistant');
+                    }
+                    addMessage(`✅ Completed by: ${data.agents.join(', ')}`, 'assistant');
+                } else {
+                    addMessage(`❌ Error: ${data.error || 'Unknown error'}`, 'assistant');
+                }
+            } catch (error) {
+                addMessage(`❌ Connection error: ${error.message}. Make sure backend is running on localhost:5000`, 'assistant');
+            }
+        }
+
+        function addMessage(text, type, isHTML = false) {
+            const messagesDiv = document.getElementById('messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+            
+            if (isHTML) {
+                contentDiv.innerHTML = text;
+            } else {
+                contentDiv.textContent = text;
+            }
+            
+            messageDiv.appendChild(contentDiv);
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        // File Upload
+        function addFile() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                uploadedFiles.push(file);
+                updateFilePreview();
+            };
+            input.click();
+        }
+
+        function addVideo() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'video/*';
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                uploadedFiles.push(file);
+                updateFilePreview();
+            };
+            input.click();
+        }
+
+        function addImage() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                uploadedFiles.push(file);
+                updateFilePreview();
+            };
+            input.click();
+        }
+
+        function updateFilePreview() {
+            const preview = document.getElementById('file-preview');
+            preview.innerHTML = '';
+            uploadedFiles.forEach((file, index) => {
+                const tag = document.createElement('div');
+                tag.className = 'file-tag';
+                tag.innerHTML = `
+                    <span>📎 ${file.name}</span>
+                    <button class="file-remove" onclick="removeFile(${index})">✕</button>
+                `;
+                preview.appendChild(tag);
+            });
+        }
+
+        function removeFile(index) {
+            uploadedFiles.splice(index, 1);
+            updateFilePreview();
+        }
+
+        // Menu
+        const menuBtn = document.getElementById('menu-btn');
+        const menuDropdown = document.getElementById('menu-dropdown');
+
+        menuBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            menuDropdown.classList.toggle('active');
+        });
+
+        document.addEventListener('click', () => {
+            menuDropdown.classList.remove('active');
+        });
+
+        // Modal Functions
+        function openModal(type) {
+            menuDropdown.classList.remove('active');
+            const modals = {
+                'settings': 'settings-modal',
+                'agents': 'agents-modal',
+                'terminal': 'terminal-modal',
+                'workflow': 'workflow-modal',
+                'history': 'history-modal'
+            };
+            document.getElementById(modals[type]).classList.add('active');
+        }
+
+        function closeModal(type) {
+            const modals = {
+                'settings': 'settings-modal',
+                'agents': 'agents-modal',
+                'terminal': 'terminal-modal',
+                'workflow': 'workflow-modal',
+                'history': 'history-modal'
+            };
+            document.getElementById(modals[type]).classList.remove('active');
+        }
+
+        function toggleSetting(el) {
+            el.classList.toggle('active');
+        }
+
+        // Enter to send
+        document.getElementById('input-text').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+
+        // Close modals on background click
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
